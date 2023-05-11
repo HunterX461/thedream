@@ -1,0 +1,113 @@
+Here's a sample unit test case for the `Token` class:
+
+```
+
+describe('Token', () => {
+
+  let token;
+
+  beforeEach(() => {
+
+    token = new Token('Test Token', 'TT', 1000);
+
+  });
+
+  it('should mint new tokens', () => {
+
+    token.mint('Alice', 500);
+
+    expect(token.balance.get('Alice')).toEqual(500);
+
+    expect(token.totalSupply).toEqual(500);
+
+  });
+
+  it('should transfer tokens', () => {
+
+    token.mint('Alice', 500);
+
+    token.transfer('Alice', 'Bob', 200);
+
+    expect(token.balance.get('Alice')).toEqual(300);
+
+    expect(token.balance.get('Bob')).toEqual(200);
+
+  });
+
+  it('should throw an error if not enough tokens available', () => {
+
+    expect(() => token.mint('Alice', 2000)).toThrowError('Not enough tokens available');
+
+  });
+
+  it('should throw an error if insufficient balance', () => {
+
+    expect(() => token.transfer('Alice', 'Bob', 200)).toThrowError('Insufficient balance');
+
+  });
+
+});
+
+```
+
+This test suite checks the `mint` and `transfer` methods of the `Token` class, as well as the error handling for insufficient tokens and balance.
+
+Here's a sample unit test case for the `Crowdfunding` class:
+
+```
+
+describe('Crowdfunding', () => {
+
+  let token;
+
+  let crowdfunding;
+
+  beforeEach(() => {
+
+    token = new Token('Test Token', 'TT', 1000);
+
+    crowdfunding = new Crowdfunding('Test Project', 500, 1000, token);
+
+  });
+
+  it('should invest in the project', () => {
+
+    crowdfunding.invest(200);
+
+    expect(crowdfunding.fundsRaised).toEqual(200);
+
+    expect(crowdfunding.investors.has(msg.sender)).toBe(true);
+
+  });
+
+  it('should withdraw funds if goal is reached', () => {
+
+    crowdfunding.invest(500);
+
+    crowdfunding.withdraw();
+
+    expect(token.balance.get(msg.sender)).toEqual(500);
+
+  });
+
+  it('should throw an error if goal not reached', () => {
+
+    expect(() => crowdfunding.withdraw()).toThrowError('Goal not reached');
+
+  });
+
+  it('should throw an error if crowdfunding has ended', () => {
+
+    crowdfunding.deadline = Date.now() - 1000;
+
+    expect(() => crowdfunding.invest(200)).toThrowError('Crowdfunding has ended');
+
+    expect(() => crowdfunding.withdraw()).toThrowError('Crowdfunding still ongoing');
+
+  });
+
+});
+
+```
+
+This test suite checks the `invest` and `withdraw` methods of the `Crowdfunding` class, as well as the error handling for goal not reached and ongoing crowdfunding.
