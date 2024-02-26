@@ -1,0 +1,4 @@
+while read -r url; do
+    new_url=$(echo "$url" | sed -E "s/(FUZZ=[^&]*)&?/\1/g")
+    echo "$new_url"
+done < urls_with_fuzz.txt > urls_without_fuzz.txt
